@@ -17,7 +17,7 @@ Specifically, FB, FR, and CO questions receive a list of candidate answers, and 
 For generating the data samples:
 1. Create a Dataset and NLVR directory. 
 2. Put the NLVR train.json, test.json. dev.json in the NLVR directory. 
-3. In Dataset_gen.py set "file_name1" to the NLVR file and "file_name" to the desire set name.
+3. In Dataset_gen.py set "file_name1" to the NLVR file (e.g. "test", "dev," or "train") and "file_name" to the desire set name (e.g. "test", "unseentest", "train_24k" and etc.)
 4. Set the values of num_of_stories, num_story_per_img, num_q_qtype.     
 5. Run the Dataset_gen.py file in terminal.
 
