@@ -28,3 +28,5 @@ There are three types of annotation for each set.
 3. The main file which has stories, questions, answers, candidate answers, consistency and contrast set (if appliable).
 
 Dataset is provided in SpartQA.zip : https://github.com/HLR/SpartQA_generation/blob/main/SpartQA.zip
+
+To see the implemented baselines on this dataset check : https://github.com/HLR/SpartQA-baselines
