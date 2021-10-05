@@ -27,6 +27,6 @@ There are three types of annotation for each set.
 2. SpRL: has the annotation regrading the Spatial Role and Relation extraction
 3. The main file which has stories, questions, answers, candidate answers, consistency and contrast set (if appliable).
 
-Dataset is provided in SpartQA.zip : https://github.com/HLR/SpartQA_generation/blob/main/SpartQA.zip
+Dataset is provided in SpartQA.zip : https://drive.google.com/file/d/1xW8abrXcX_BOkbzjrAr6UoF5KglPHQLh/view?usp=sharing
 
 To see the implemented baselines on this dataset check : https://github.com/HLR/SpartQA-baselines
