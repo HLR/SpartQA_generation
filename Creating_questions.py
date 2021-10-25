@@ -807,12 +807,12 @@ def FB_create_question():
         sen += 'Which blocks have a '+ obj_defined+ '?'
         answer, start_end_c = answer_FB(obj,scn,objs_temp)
         
-        polarity = False
+        negative = False
         _article = 'a '
         
         if x: # do not have
             sen = "Which blocks don't have any "+ obj_defined+ '?'
-            polarity, _article = True, 'any '
+            negative, _article = True, 'any '
             
             spatial_ind = [['have']] + spatial_ind
             if trajector: trajector[-1][0] = 'any '+ trajector[-1][0]
@@ -837,7 +837,7 @@ def FB_create_question():
             _phrase = [['Which']] + [['a '+obj_defined]]*len_land
             
         landmark = [[_article+_traj_or_land]] + landmark if _traj_or_land else [[_article+obj_defined]] + landmark
-        create_annotation(sen, main = 0, polarity = polarity)
+        create_annotation(sen, main = 0, negative = negative)
         
     else: sen = 'Cannot create a FB question!'
     
@@ -1363,7 +1363,7 @@ def temp_update(features=None, relation = '', same_rel=''):
         scn = features[1]
         obj_attribute = features[2]
         used_attr = features[3]
-        block_num = features[4]
+        has_block_num = features[4]
         
         obj_attt = []          
         
@@ -1374,11 +1374,11 @@ def temp_update(features=None, relation = '', same_rel=''):
         if first_temp == 0: # already have a list of object just based on the features choose between them.
             for i in temporary_objs:
                 o_attr = obj_attr[i[1]][ind_obj_attr(i[0],i[1])]
-                if block_num:
-                    if i[1] == scn and issubset(obj_attt[1:],o_attr):
+                if has_block_num:
+                    if i[1] == scn and issubset(obj_attt[1:],o_attr[1:]):
                         if i not in objs: objs.append(i) # first element id of object and the second one is id of block 
                 else:
-                    if issubset(obj_attt[1:],o_attr):
+                    if issubset(obj_attt[1:],o_attr[1:]):
                         if i not in objs: objs.append(i) # first element id of object and the second one is id of block 
             temporary_objs = objs    
             
@@ -1387,11 +1387,11 @@ def temp_update(features=None, relation = '', same_rel=''):
             for i in range(_num_scenes):
                 for obj_at in obj_attr[i]:
 
-                    if block_num:
-                        if i == scn and issubset(obj_attt[1:],obj_at):
+                    if has_block_num:
+                        if i == scn and issubset(obj_attt[1:],obj_at[1:]):
                             if [obj_at[0],i] not in objs: objs.append([obj_at[0],i]) # first element id of object and the second one is id of block 
                     else:
-                        if issubset(obj_attt[1:],obj_at):
+                        if issubset(obj_attt[1:],obj_at[1:]):
                             if [obj_at[0],i] not in objs: objs.append([obj_at[0],i]) # first element id of object and the second one is id of block 
             temporary_objs = objs    
             
@@ -1611,7 +1611,7 @@ def answer_CO_0(obj,scn,objs_temp, obj1, scn1, obj1s_temp, obj2, scn2, obj2s_tem
                     if relation in rel:
                         correct[1] = True
             
-    if correct[0] == correct[1] == True: S_answer=[2];
+    if correct[0] == correct[1] == True: S_answer=[2]
     elif correct[0] == correct[1] == False: S_answer=[3]
     elif correct[0] == True: S_answer = [0] if order else [1]
     elif correct[1] == True: S_answer = [1] if order else [0]
@@ -1679,75 +1679,93 @@ def answer_YN(obj1,scn1,temp1, obj2, scn2, temp2, relation, any_or_all):
         a_list = FR_correct(obj1,scn1,obj2,scn2)
         if relation in a_list: possible_ans = 'Yes'
         elif reverse(relation) in a_list: possible_ans = 'No'
-        elif relation == 'touching' and scn1 != scn2: possible_ans = 'No'
+        # elif relation == 'touching' and scn1 != scn2: possible_ans = 'No'
         else: possible_ans = 'DK'
     else:
         loop_1, loop_2 = False, False
         if any_or_all == [1,1]:
-            no_ans = None
-            DK_exists= False
-            for t1 in temp1:
-                no_ans = False
-                for t2 in temp2:
-                    if t1 != t2:
-                        a_list1 = FR_correct(t1[0], t1[1], t2[0], t2[1])
-                        if reverse(relation) in a_list1: no_ans = True; DK_exists=False; break
-                        elif relation == 'touching' and t1[1] != t2[1]: no_ans = True; DK_exists=False; break
-                        elif reverse(relation) not in a_list1 and relation not in a_list1:  yes_ans = False; DK_exists = True
-                    else: no_ans = True; DK_exists=False; break
-                if no_ans: break
-                elif DK_exists: break
-            if no_ans == False: 
-                 possible_ans = 'DK' if DK_exists else 'Yes'
-            else: possible_ans = 'No'
+
+
+            if all([relation in FR_correct(t1[0], t1[1], t2[0], t2[1]) for t1 in temp1 for t2 in temp2 ]): possible_ans = 'Yes'
+            elif any([ any([x in FR_correct(t1[0], t1[1], t2[0], t2[1]) for x in [reverse(relation), 'NaN']])for t1 in temp1 for t2 in temp2]): possible_ans = 'No'
+            else: possible_ans = 'DK'
+            # no_ans = None
+            # DK_exists= False
+            # for t1 in temp1:
+            #     no_ans = False
+            #     for t2 in temp2:
+            #         if t1 != t2:
+            #             a_list1 = FR_correct(t1[0], t1[1], t2[0], t2[1])
+            #             if reverse(relation) in a_list1: no_ans = True; DK_exists=False; break
+            #             # elif relation == 'touching' and t1[1] != t2[1]: no_ans = True; DK_exists=False; break
+            #             elif reverse(relation) not in a_list1 and relation not in a_list1:  yes_ans = False; DK_exists = True
+            #         else: no_ans = True; DK_exists=False; break
+            #     if no_ans: break
+            #     elif DK_exists: break
+            # if no_ans == False: 
+            #      possible_ans = 'DK' if DK_exists else 'Yes'
+            # else: possible_ans = 'No'
         
         elif any_or_all == [1,0]:
-            DK_exists, DK_total = False, False
-            for t2 in temp2:
-                yes_ans = True
-                for t1 in temp1:
-                    if t1 != t2:
-                        if relation == 'touching' and t1[1] != t2[1]: yes_ans = False; DK_exists=False; break
-                        a_list1 = FR_correct(t2[0], t2[1], t1[0], t1[1])
-                        if relation in a_list1: yes_ans = False; DK_exists=False; break
-                        elif relation not in a_list1 and reverse(relation) not in a_list1:  yes_ans = False; DK_exists = True 
-                    else: yes_ans = False; DK_exists=False; break
-                if yes_ans: break
-                if DK_exists == True: DK_total = DK_exists
-            if yes_ans == False: 
-                 possible_ans = 'DK' if DK_total else 'No'
-            else: possible_ans = 'Yes'
+
+            if any([ all(relation in FR_correct(t1[0], t1[1], t2[0], t2[1]) for t1 in temp1 ) for t2 in temp2]): possible_ans = 'Yes'
+            elif all([ any( any([x in FR_correct(t1[0], t1[1], t2[0], t2[1]) for x in [reverse(relation), 'NaN']]) for t1 in temp1 ) for t2 in temp2]): possible_ans = 'No'
+            else: possible_ans = 'DK'
+            # DK_exists, DK_total = False, False
+            # for t2 in temp2:
+            #     yes_ans = True
+            #     for t1 in temp1:
+            #         if t1 != t2:
+            #             # if relation == 'touching' and t1[1] != t2[1]: yes_ans = False; DK_exists=False; break
+            #             a_list1 = FR_correct(t2[0], t2[1], t1[0], t1[1])
+            #             if relation in a_list1: yes_ans = False; DK_exists=False; break
+            #             elif relation not in a_list1 and reverse(relation) not in a_list1:  yes_ans = False; DK_exists = True 
+            #         else: yes_ans = False; DK_exists=False; break
+            #     if yes_ans: break
+            #     if DK_exists == True: DK_total = DK_exists
+            # if yes_ans == False: 
+            #      possible_ans = 'DK' if DK_total else 'No'
+            # else: possible_ans = 'Yes'
             
         elif any_or_all == [0,1]:
-            yes_ans =None
-            DK_exists, DK_total = False, False
-            for t1 in temp1:
-                yes_ans = True
-                for t2 in temp2:
-                    if t1 != t2:
-                        if relation == 'touching' and t1[1] != t2[1]: yes_ans = False; DK_exists=False; break
-                        a_list1 = FR_correct(t1[0], t1[1], t2[0], t2[1])
-                        if reverse(relation) in a_list1: yes_ans = False; DK_exists=False; break
-                        elif reverse(relation) not in a_list1 and relation not in a_list1: yes_ans = False; DK_exists = True 
-                    else: yes_ans = False; DK_exists=False; break
-                if yes_ans: break
-                if DK_exists == True: DK_total = DK_exists
-            if yes_ans == False: 
-                 possible_ans = 'DK' if DK_total else 'No'
-            else: possible_ans = 'Yes'
+
+            if any(all([relation in  FR_correct(t1[0], t1[1], t2[0], t2[1]) for t2 in temp2]) for t1 in temp1): possible_ans = 'Yes'
+            elif all( any([ any([ x in  FR_correct(t1[0], t1[1], t2[0], t2[1]) for x in [reverse(relation), 'NaN']]) for t2 in temp2]) for t1 in temp1) : possible_ans = 'No'
+            else: possible_ans = 'DK'
+            # yes_ans =None
+            # DK_exists, DK_total = False, False
+            # for t1 in temp1:
+            #     yes_ans = True
+            #     for t2 in temp2:
+            #         if t1 != t2:
+            #             # if relation == 'touching' and t1[1] != t2[1]: yes_ans = False; DK_exists=False; break
+            #             a_list1 = FR_correct(t1[0], t1[1], t2[0], t2[1])
+            #             if reverse(relation) in a_list1: yes_ans = False; DK_exists=False; break
+            #             elif reverse(relation) not in a_list1 and relation not in a_list1: yes_ans = False; DK_exists = True 
+            #         else: yes_ans = False; DK_exists=False; break
+            #     if yes_ans: break
+            #     if DK_exists == True: DK_total = DK_exists
+            # if yes_ans == False: 
+            #      possible_ans = 'DK' if DK_total else 'No'
+            # else: possible_ans = 'Yes'
             
         else: # [0,0]
-            DK_exists = False
-            for t1 in temp1:
-                DK_exists = False
-                for t2 in temp2:
-                    if t1 != t2:
-                        a_list1 = FR_correct(t1[0], t1[1], t2[0], t2[1])
-                        if relation in a_list1: possible_ans = 'Yes'; loop_1 = True; break
-                        elif reverse(relation) not in a_list1 and (relation != 'touching' or t1[1] == t2[1]): DK_exists = True 
-                if loop_1: break 
-            if loop_1 == False:
-                possible_ans = 'DK' if DK_exists else 'No'
+
+            # z = [FR_correct(t1[0], t1[1], t2[0], t2[1]) for t1 in temp1 for t2 in temp2]
+            if any([relation in FR_correct(t1[0], t1[1], t2[0], t2[1]) for t1 in temp1 for t2 in temp2]): possible_ans = 'Yes'
+            elif all([ any([x in FR_correct(t1[0], t1[1], t2[0], t2[1]) for x in [reverse(relation), 'NaN']]) for t1 in temp1 for t2 in temp2]): possible_ans = 'No'
+            else: possible_ans = 'DK'
+            # DK_exists = False
+            # for t1 in temp1:
+            #     # DK_exists = False
+            #     for t2 in temp2:
+            #         if t1 != t2:
+            #             a_list1 = FR_correct(t1[0], t1[1], t2[0], t2[1])
+            #             if relation in a_list1: possible_ans = 'Yes'; loop_1 = True; break
+            #             elif reverse(relation) not in a_list1 and  t1[1] == t2[1]: DK_exists = True 
+            #     if loop_1: break 
+            # if loop_1 == False:
+            #     possible_ans = 'DK' if DK_exists else 'No'
             
     # start and end of word and character index of answer in story
     start_end_c = []
@@ -1813,6 +1831,7 @@ def FR_correct(obj1,scn1,obj2,scn2):
         answer = find_rel_two_scn(scn1, scn2)
         
     else:
+        if obj1 == obj2: return ['NaN']
         answer = find_rel_two_objs(scn1, obj1,obj2)
     
     return answer   
@@ -2429,7 +2448,7 @@ def FR_consis(obj1_def, obj2_def, ans):
 #******************Annotation functions********************
 #**********************************************************
 
-def create_annotation(sen, main = -1, polarity = False):
+def create_annotation(sen, main = -1, negative = False):
     
     global annotations 
     global trajector, landmark, spatial_ind, _traj_or_land, _phrase
@@ -2475,7 +2494,7 @@ def create_annotation(sen, main = -1, polarity = False):
                         spatial_value, g_type, s_type = spatial_indicator(sp, _land)
                     
                     # add 
-                    ann['spatial_description'].append({"spatial_value":spatial_value, "g_type": g_type, "s_type": s_type , "polarity": polarity if ind == main else False, "FoR": 'Relative', "trajector": trajector, 'landmark': landmark, 'spatial_indicator': spatial_ind})
+                    ann['spatial_description'].append({"spatial_value":spatial_value, "g_type": g_type, "s_type": s_type , "negative": negative if ind == main else False, "FoR": 'Relative', "trajector": trajector, 'landmark': landmark, 'spatial_indicator': spatial_ind})
                     
     annotations.append(ann)
     SOT(sen)

@@ -1,19 +1,36 @@
 import json
 import random
 import re
+from tqdm import tqdm
 from Random_choice import random_choice
 from Creating_story import creating_story
 from Creating_questions import creating_questions
 from Change_Words import change_words, change_words_ans
 from Annotation import creating_annotation
+import argparse
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--nlvr_data",help="Name of the sets in the NLVR dataset", type= str, default='test')
+parser.add_argument("--name",help="Name of the set in spartqa dataset", type= str, default='test')
+
+parser.add_argument("--num_image", help="Number of image, 6660 for train, 1000 for other", type= int, default=1000)
+parser.add_argument("--story_per_image",help="How many story do you want to create for each image", type= int, default=2)
+parser.add_argument("--num_question",help="number of question for each question type.", type= int, default=2)
+parser.add_argument("--question_type",help="name of the question types: all, YN, FB, FR, CO", type= str, default='all')
+parser.add_argument("--no_save", help="just testing generation phase", action='store_true', default = False)
+parser.add_argument("--seed_num",help="add seed number for random choices.", type= int, default=None)
+parser.add_argument("--skip_except",help="skip all examples expcept story X", type= int, default=None)
+
+
+args = parser.parse_args()
 
 # consistency just created for test set
-file_name1 = 'dev'
-file_name = 'dev'
-data = [json.loads(line) for line in open('NLVR/'+file_name1+'.json', 'r')]
+nlvr_data = args.nlvr_data
+file_name = args.name
+data = [json.loads(line) for line in open('NLVR/'+nlvr_data+'.json', 'r')]
 
-num_of_stories, num_story_per_img, num_q_qtype, pass_num = 1000, 2, 2, 0
+num_of_stories, num_story_per_img, num_q_qtype, pass_num = args.num_image, args.story_per_image, args.num_question, 0
 
 f2 = open('Dataset/'+file_name+'.txt','w')
 
@@ -21,13 +38,14 @@ dataset = {"name": "SPaRTQA" ,"data" : []}
 annotation = {"name": "SpaRTQA_Annotation", "data": []}
 SpRL_annotation = {"name": "SpaRTQA_SpRL_Annotation", "data": []}
 
-for per_img in range(num_story_per_img):
+for per_img in tqdm(range(num_story_per_img)):
     len_story =len(data[:num_of_stories])
-    for each_data in range(len_story):
-        zxy = (len_story*(per_img))+each_data
+    for each_data in tqdm(range(len_story)):
+        if args.skip_except and each_data != args.skip_except: continue
+        zxy = args.seed_num if args.seed_num else (len_story*(per_img))+each_data 
         random.seed(zxy)
         
-        print("sample ", (len_story*per_img)+each_data+1 , ' done!')
+        # print("sample ", (len_story*per_img)+each_data+1 , ' done!')
         print("**************** story ", (len_story*per_img)+each_data+1," ****************", file = f2)
          
         
@@ -80,12 +98,14 @@ for per_img in range(num_story_per_img):
         
         single_story = {"identifier": story['identifier'], "directory": story['directory'],"seed_id": zxy, "story":[story_ff], "questions": []}
         
-        Question_name = ["YN","CO","FR","FB"] #["YN"]#["YN","CO","FR","FB"] #"FA","FO", "YN"
+        Question_name = ["YN","CO","FR","FB"]  #["YN"]#["YN","CO","FR","FB"] #"FA","FO", "YN"
         q_index = 0
         for q_type in Question_name:
             object_id_from_pre_Q = []
             for i in range(num_q_qtype):
                 
+                if args.question_type != 'all' and q_type != args.question_type: continue
+                # if _final_story != "We have two blocks, A and B. Block A is to the left of B. Block A has a medium yellow square. Block B contains two medium blue squares and two other medium black squares. Medium blue square number one is below medium black square number two and medium blue square number two. Below medium black square number two and medium black square number one there is medium blue square number two. Medium black square number one is below medium black square number two.": continue
                 if q_type == "FB" and _num_scenes == 1: continue 
                 
                 try:
@@ -97,12 +117,12 @@ for per_img in range(num_story_per_img):
                 
                 if question_prop == -1: continue
                 else: question, answer, start_end_char, candidate_answer, consistency, contrast, q_annotation, reasoning_type, indifinite, object_id_from_pre_Q = question_prop
-                
+                # print('answer', _final_story, question,answer, candidate_answer)
                 
                 if 'DK' in question: continue #or 'edge' in question: continue
                     
                 consistency_list = []
-                if file_name1 == "test": 
+                if nlvr_data == "test": 
                     for ind,consist in enumerate(consistency):
                         ques = change_words(consist[0], rel_rand, shape_rand, size_rand, color_rand) if random_change else consist[0]
                         ans = change_words_ans(consist[1], rel_rand, shape_rand, size_rand, color_rand) if random_change else consist[1]
@@ -113,7 +133,7 @@ for per_img in range(num_story_per_img):
                 
                 #Contrast set
                 contrast_list = []
-                if file_name1 == "test":
+                if nlvr_data == "test":
                     for ind,cont in enumerate(contrast):
                         ques = change_words(cont[0], rel_rand, shape_rand, size_rand, color_rand) if random_change == 1 else cont[0]
                         ans = change_words_ans(cont[1], rel_rand, shape_rand, size_rand, color_rand) if random_change == 1 else cont[1]
@@ -141,12 +161,12 @@ for per_img in range(num_story_per_img):
 f2.close()
 print("\nTotal number of stories: ", (len(data[:num_of_stories]) * num_story_per_img) - pass_num)
 
-
-with open('Dataset/'+file_name+'.json', 'w') as outfile:
-    json.dump(dataset, outfile)
-    
-with open('Dataset/annotation_'+file_name+'.json', 'w') as outfile:
-    json.dump(annotation, outfile)
-    
-with open('Dataset/SpRL_annotation_'+file_name+'.json', 'w') as outfile:
-    json.dump(SpRL_annotation, outfile)
+if not args.no_save:
+    with open('Dataset/'+file_name+'.json', 'w') as outfile:
+        json.dump(dataset, outfile)
+        
+    with open('Dataset/annotation_'+file_name+'.json', 'w') as outfile:
+        json.dump(annotation, outfile)
+        
+    with open('Dataset/SpRL_annotation_'+file_name+'.json', 'w') as outfile:
+        json.dump(SpRL_annotation, outfile)

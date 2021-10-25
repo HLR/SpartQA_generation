@@ -1306,37 +1306,38 @@ def U(O_R):
     
     same_rel = all(z == object_i_rel[0] for z in object_i_rel) if object_i_rel else False
     
-    y = random.choice([0,1])
+    # y = random.choice([0,1])
     #has, contains
-    if y == 0 and object_i and object_i_rel: 
-        sen3 = ''
-        if random.choice([0,1]):
-            sen += 'It '
-            traj1 += ['it']
+    # if y == 0 and object_i and object_i_rel: 
+    #     sen3 = ''
+    #     if random.choice([0,1]):
+    #         sen += 'It '
+    #         traj1 += ['it']
             
-        else:
-            sen += 'This block '
-            traj1 += ['this block']
+    #     else:
+    #         sen += 'This block '
+    #         traj1 += ['this block']
             
-        traj_id += [100+scene_num]
+    #     traj_id += [100+scene_num]
         
-        if len(ch_os) != 0: sen += 'also '
-        if random.choice([0,1]):
-            sen += 'has '
-            sp_ind1 += ['has']
-        else:
-            sen += 'contains '
-            sp_ind1 += ['contains']
+    #     if len(ch_os) != 0: sen += 'also '
+    #     if random.choice([0,1]):
+    #         sen += 'has '
+    #         sp_ind1 += ['has']
+    #     else:
+    #         sen += 'contains '
+    #         sp_ind1 += ['contains']
             
-        for h,z in enumerate(object_i):
-            sen3+= ', 'if sen3 else '' 
-            sen3 += z+' '
-        land1 = obj_list
-        land_id = obj_id_list
-        sen3 = add_and(sen3)
-        sen+= sen3
+    #     for h,z in enumerate(object_i):
+    #         sen3+= ', 'if sen3 else '' 
+    #         sen3 += z+' '
+    #     land1 = obj_list
+    #     land_id = obj_id_list
+    #     sen3 = add_and(sen3)
+    #     sen+= sen3
     # there is
-    elif y == 1 and object_i and object_i_rel: 
+    # elif y == 1 and 
+    if object_i and object_i_rel: 
         l=random.choice([0,1])
         this_block = 0
         if l: 
@@ -2138,7 +2139,7 @@ def create_annotation(sen):
                     spatial_value, g_type, s_type= spatial_indicator(sp, _land)
                     
                     # add 
-                    ann['spatial_description'].append({"spatial_value": spatial_value, "g_type": g_type, "s_type": s_type, "polarity": False, "FoR": 'Relative', "trajector": trajector, 'landmark': landmark, 'spatial_indicator': spatial_ind})
+                    ann['spatial_description'].append({"spatial_value": spatial_value, "g_type": g_type, "s_type": s_type, "negative": False, "FoR": 'Relative', "trajector": trajector, 'landmark': landmark, 'spatial_indicator': spatial_ind})
                     
     annotation['annotations'].append(ann)
     land, traj, sp_ind = [], [], []
