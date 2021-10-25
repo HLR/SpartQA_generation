@@ -72,7 +72,7 @@ There are three types of annotation for each set.
 
   
 
-Dataset is provided in SpartQA.zip : https://drive.google.com/file/d/1xW8abrXcX_BOkbzjrAr6UoF5KglPHQLh/view?usp=sharing
+Dataset is provided in SpartQA.zip : https://drive.google.com/file/d/1Mhi4O5iVFda3lmR8KrYp3Fs0WBmiqjgP/view?usp=sharing
 
   
 
