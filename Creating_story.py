@@ -1298,7 +1298,8 @@ def U(O_R):
                 num_objs +=1
             sc_rl = ''
 
-    
+    if len(obj_id_list) >1: 
+        obj_id_list
     if def_objs and num_objs == 1:
         recent_objs= [[def_objs]]
     else: recent_objs = []
@@ -1554,6 +1555,7 @@ def obj_rel_scene(O_R, which, subject= '', verb = False): #check relations betwe
                         sen11 = ''
                         sen11 += num_to_word(str(num_shared))+' other' if sen else num_to_word(str(num_shared))
                         shape = 1
+                        all_obj_ids = []
                         for j in property:
                             for p in prop:
                                 sen11 += ' '+globals()['shape'](p[1])+'s' if p[0] == 'type' else ' '+globals()[p[0]](p[1])
@@ -1567,10 +1569,11 @@ def obj_rel_scene(O_R, which, subject= '', verb = False): #check relations betwe
                             Rel(j)
                             _rel+=[j]
                             for os in objs_shared:
+                                if os not in all_obj_ids : all_obj_ids += [os]
                                 update_checked_obj_sc(os, sz, clr, sh, sc_rl)
                             sz, clr, sh,sc_rl = '', '', '', ''
                         _objects+=[sen11]
-                        _object_id += [-1]
+                        _object_id += [all_obj_ids]
                         sen += sen11
                 sen = add_and(sen)
                 if sen : sen+= ' '+subject
@@ -1604,17 +1607,20 @@ def obj_rel_scene(O_R, which, subject= '', verb = False): #check relations betwe
     
                         number_of_obj+= num_shared
                         shape = 1
+                        all_obj_ids = []
                         for j in property:
                             sen1 += ' '+globals()['shape'](j[1])+'s' if j[0] == 'type' else ' '+globals()[j[0]](j[1])
                             if j[0] == 'type':
                                  shape = 0
+                            
                             for os in objs_shared:
+                                if os not in all_obj_ids: all_obj_ids += [os]
                                 update_checked_obj_sc(os, sz, clr, sh, sc_rl)
                             clr, sz, sh, sc_rl = '','','',''
                         if shape:
                             sen1 += ' '+sh_ob()
                         _objects+=[sen1]
-                        _object_id += [-1]
+                        _object_id += [all_obj_ids]
                         if relate:
                             check = 1
                             for itr,item in enumerate(prop_rel):
@@ -1684,17 +1690,19 @@ def obj_rel_scene(O_R, which, subject= '', verb = False): #check relations betwe
                     sen11 = ''
                     sen11 += num_to_word(str(num_shared))+ ' other' if sen else num_to_word(str(num_shared))
                     shape = 1
+                    all_obj_ids = []
                     for j in property:
                         sen11 += ' '+globals()['shape'](j[1])+'s' if j[0] == 'type' else ' '+globals()[j[0]](j[1])
                         if j[0] == 'type':
                              shape = 0
                         for os in objs_shared:
+                            if os not in all_obj_ids : all_obj_ids += [os]
                             update_checked_obj_sc(os, sz, clr, sh, sc_rl)
                         clr, sz, sh, sc_rl = '','','',''
                     if shape:
                         sen11 += ' '+sh_ob()
                     _objects+=[sen11]
-                    _object_id += [-1]
+                    _object_id += [all_obj_ids]
                     sen += sen11
             sen = add_and(sen)
 
@@ -1738,6 +1746,7 @@ def obj_rel_scene(O_R, which, subject= '', verb = False): #check relations betwe
         sen, number_of_obj = I(O_R,which)
         if which < 2:
             sen += ' '+subject 
+
     if which == 0:
         if _objects:
             traj += [_objects]
