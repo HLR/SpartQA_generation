@@ -78,3 +78,22 @@ Dataset is provided in SpartQA.zip : https://drive.google.com/file/d/12s2olGDV0r
 
 To see the implemented baselines on this dataset check : https://github.com/HLR/SpartQA-baselines
 
+
+
+To cite the paper use below Bibtex:
+
+@inproceedings{mirzaee-etal-2021-spartqa,
+    title = "{SPARTQA}: A Textual Question Answering Benchmark for Spatial Reasoning",
+    author = "Mirzaee, Roshanak  and
+      Rajaby Faghihi, Hossein  and
+      Ning, Qiang  and
+      Kordjamshidi, Parisa",
+    booktitle = "Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies",
+    month = jun,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.naacl-main.364",
+    doi = "10.18653/v1/2021.naacl-main.364",
+    pages = "4582--4598",
+}
