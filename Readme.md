@@ -76,7 +76,10 @@ Download [SpartQA_Auto](https://www.cse.msu.edu/~kordjams/data/SpartQA_Auto.zip)
 
 Download [SpartQA_Human](https://www.cse.msu.edu/~kordjams/data/SpartQA_Human.zip)
 
-  
+We suggest researcher to use [Spartun](https://www.cse.msu.edu/~kordjams/data/SPARTUN.zip) instead of SpartQA-Auto which contains more relation types and rules [GitHub](https://github.com/HLR/SpaRTUN). 
+Another Human generated data provided by this group is [ReSQ](https://www.cse.msu.edu/~kordjams/data/ReSQ.zip).
+
+
 
 To see the implemented baselines on this dataset check : https://github.com/HLR/SpartQA-baselines
 
