@@ -76,7 +76,7 @@ Download [SpartQA_Auto](https://www.cse.msu.edu/~kordjams/data/SpartQA_Auto.zip)
 
 Download [SpartQA_Human](https://www.cse.msu.edu/~kordjams/data/SpartQA_Human.zip)
 
-We suggest researchers to use [Spartun](https://www.cse.msu.edu/~kordjams/data/SPARTUN.zip) instead of SpartQA-Auto which contains more relation types and rules [GitHub](https://github.com/HLR/SpaRTUN). 
+We suggest researchers to use [SpaRTUN](https://www.cse.msu.edu/~kordjams/data/SPARTUN.zip) which is an updated version of SpartQA-Auto and contains more relation types and rules [GitHub](https://github.com/HLR/SpaRTUN). 
 Another Human generated data provided by this group is [ReSQ](https://www.cse.msu.edu/~kordjams/data/ReSQ.zip).
 
 
