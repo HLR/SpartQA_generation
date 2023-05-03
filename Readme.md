@@ -83,7 +83,7 @@ To see the implemented baselines on this dataset check : https://github.com/HLR/
 
 
 
-### Citation of [SPARTQA: A Textual Question Answering Benchmark for Spatial Reasoning](https://aclanthology.org/2021.naacl-main.364/):
+### Citing [SPARTQA: A Textual Question Answering Benchmark for Spatial Reasoning](https://aclanthology.org/2021.naacl-main.364/):
 
       @inproceedings{mirzaee-etal-2021-spartqa,
           title = "{SPARTQA}: A Textual Question Answering Benchmark for Spatial Reasoning",
