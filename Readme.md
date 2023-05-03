@@ -31,8 +31,6 @@ All four types of questions are formulated as multiple-choice questions.
 
 Specifically, FB, FR, and CO questions receive a list of candidate answers, and YN questions are choosing from Yes, No, or ``DK''~(Do not Know). The `` DK'' option is due to the open-world assumption of the stories, where if something is not described in the text, it is not considered false.
 
-  
-  
 
 For generating the data samples:
 
@@ -85,7 +83,7 @@ To see the implemented baselines on this dataset check : https://github.com/HLR/
 
 
 
-To cite the paper use below Bibtex:
+### Citation of [SPARTQA: A Textual Question Answering Benchmark for Spatial Reasoning](https://aclanthology.org/2021.naacl-main.364/):
 
       @inproceedings{mirzaee-etal-2021-spartqa,
           title = "{SPARTQA}: A Textual Question Answering Benchmark for Spatial Reasoning",
